@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            background: rgb(204, 204, 204);
+        }
+
+        page {
+            background: white;
+            display: block;
+            margin: 0 auto;
+            margin-bottom: 0.5cm;
+            box-shadow: 0 0 0.5cm rgba(0, 0, 0, 0.5);
+        }
+
+        page[size="A4"] {
+            width: 21cm;
+            height: 30.82cm;
+        }
+
+        @media print {
+
+            body,
+            page {
+                margin: 0;
+                box-shadow: 0;
+                -webkit-print-color-adjust: exact;
+            }
+        }
+
+        table {
+            margin: auto;
+            table-layout: fixed;
+        }
+
+        tr {
+            height: 50px
+        }
+
+        td {
+            border-style: solid;
+            border-color: rgba(255, 0, 0, 0.5);
+            border-width: thin;
+            text-align: center;
+            font-size: 30px;
+            color: rgba(0, 0, 0, 0.3);
+            ;
+            width: calc(50px - 4px);
+            background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA3NS4yMiA3NS4yMiI+PGRlZnM+PHN0eWxlPi5jbHMtMXtvcGFjaXR5OjAuMzt9LmNscy0yLC5jbHMtM3tmaWxsOm5vbmU7c3Ryb2tlOiNlNjAwMTI7c3Ryb2tlLW1pdGVybGltaXQ6MTA7fS5jbHMtM3tzdHJva2UtZGFzaGFycmF5OjQuNzggNC43ODt9PC9zdHlsZT48L2RlZnM+PHRpdGxlPuizh+eUoiAxPC90aXRsZT48ZyBpZD0i5ZyW5bGkXzIiIGRhdGEtbmFtZT0i5ZyW5bGkIDIiPjxnIGlkPSLlnJblsaRfMS0yIiBkYXRhLW5hbWU9IuWcluWxpCAxIj48ZyBjbGFzcz0iY2xzLTEiPjxsaW5lIGNsYXNzPSJjbHMtMiIgeDE9Ijc0Ljg2IiB5MT0iMC4zNSIgeDI9IjczLjEiIHkyPSIyLjEyIi8+PGxpbmUgY2xhc3M9ImNscy0zIiB4MT0iNjkuNzIiIHkxPSI1LjUiIHgyPSIzLjgxIiB5Mj0iNzEuNDEiLz48bGluZSBjbGFzcz0iY2xzLTIiIHgxPSIyLjEyIiB5MT0iNzMuMSIgeDI9IjAuMzUiIHkyPSI3NC44NiIvPjwvZz48ZyBjbGFzcz0iY2xzLTEiPjxsaW5lIGNsYXNzPSJjbHMtMiIgeDE9Ijc0Ljg2IiB5MT0iNzQuODYiIHgyPSI3My4xIiB5Mj0iNzMuMSIvPjxsaW5lIGNsYXNzPSJjbHMtMyIgeDE9IjY5LjcyIiB5MT0iNjkuNzIiIHgyPSIzLjgxIiB5Mj0iMy44MSIvPjxsaW5lIGNsYXNzPSJjbHMtMiIgeDE9IjIuMTIiIHkxPSIyLjEyIiB4Mj0iMC4zNSIgeTI9IjAuMzUiLz48L2c+PC9nPjwvZz48L3N2Zz4=);
+            background-size: contain;
+            background-position: center top;
+            background-repeat: no-repeat;
+        }
+    </style>
+</head>
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<body>
+    <!-- 頁寬(800-100) = 700 -->
+    <!-- 方形格子大小 700\11 -->
+</body>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        Swal.fire({
+            input: 'textarea',
+            inputLabel: '輸入想要生成字帖的文字段落',
+            inputPlaceholder: '輸入想要生成字帖的文字段落',
+            showCancelButton: true
+        }).then(function (swalObj) {
+            creatPage(swalObj.value)
+            Swal.fire(
+                '建立成功!',
+                '可以印出來練字囉',
+                'success'
+            )
+        }, function (dismiss) {
+            if (dismiss === 'cancel') {
+                Swal.fire(
+                    'Cancelled',
+                    '清除內容',
+                    'info'
+                )                
+            }
+        })
+    })
+    function creatPage(txt) {
+        var tdnum = 14;
+        var trnum = 22
+        var rows = txt.toString().split('\n');
+
+        //取出總行數
+        var html_tr_array = [];
+        rows.forEach(row => {
+            //超過num長度者切成多行
+            let formatedRowArray = row.match(new RegExp(`.{1,${tdnum}}`, 'g'));
+            // console.log(formatedRowArray);
+
+            
+            if (formatedRowArray != null) {
+                //多行資料加入Array
+                formatedRowArray.map(tr => {
+                    html_tr_array.push(`<tr>
+                        ${Array.from(tr).map(td => { return `<td>${td}</td>`; }).join('')}
+                    </tr>`);
+                });
+            }
+            else {
+                //處理空白行
+                html_tr_array.push(`<tr></tr>`);
+            }
+        })
+        console.log(html_tr_array);
+
+        // 映射物件 加入頁面欄位
+        var groupedDataMapPage = html_tr_array.map((x, i) => {
+            return {
+                page: Math.ceil((i + 1) / trnum),
+                value: x
+            }
+        })
+        console.log(groupedDataMapPage);
+
+        // 映射物件 加入頁面欄位
+        var groupedData = [];
+        groupedDataMapPage.forEach((x, i) => {
+            groupIndex = x.page - 1;
+            if (groupedData[groupIndex] == undefined) { groupedData.push([]) }
+            groupedData[groupIndex].push(x.value);
+        })
+        console.log(groupedData);
+
+        var pageout = groupedData.map(page => {
+            // console.log(page);
+            return `<page size="A4" style="padding: 50px;">
+                <table> 
+                    <tbody>
+                        ${page.map(tr => { return tr; }).join('')}
+                    </tbody>
+                </table>
+            </page>`;
+        }).join('');
+        // console.log(pageout);
+
+        document.querySelector("body").innerHTML = pageout;
+    }
+</script>
+
+</html>
